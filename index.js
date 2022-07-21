@@ -4,9 +4,9 @@ import dotenv from "dotenv";
 dotenv.config();
 import { ping, challenge, fire } from "./commands/index.js";
 import { interactionCreate, ready } from "./events/index.js";
-import { REST } from "@discordjs/rest";
 import { deployCommands } from "./deploy-commands.js";
 import mongoose from "mongoose";
+import Game from "./models/Game.js";
 
 const commandCollection = { ping, challenge, fire };
 const eventCollection = { interactionCreate, ready };
@@ -49,9 +49,11 @@ try {
 }
 const start = async () => {
   try {
-    await client.login(token);
     await mongoose.connect(process.env.MONGO_URI);
     console.log("DATABASE_CONNECTED");
+    await Game.deleteMany({});
+    console.log("DATABASE_EMPTY");
+    await client.login(token);
   } catch (error) {
     console.log(error);
   }
